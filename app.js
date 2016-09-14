@@ -11,11 +11,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 //Database
 postgresHandle.defaults.ssl = true;
-var config = {
-  user: 'jsvjxaxivutiid', 
-  database: 'd3mltsg5qh11fe', 
-  password: 'Iu3pdH2BccKgOWDsmPT_QqPhoD', 
-  host: 'ec2-174-129-209-53.compute-1.amazonaws.com', 
+var config = { //replace config with valid data
+  user: 'user', 
+  database: 'db', 
+  password: 'password', 
+  host: 'hostname', 
   port: 5432, 
   max: 12, 
   idleTimeoutMillis: 30000
@@ -26,7 +26,7 @@ var mailer = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
         user: 'sathyashan91@gmail.com',
-        pass: 'Sathya12s'
+        pass: '<password>'
     }
 });
 
