@@ -1,0 +1,84 @@
+body{
+    font-family: 'Open Sans Condensed', sans-serif;
+    font-size: 18px;
+    color: #757575;
+    margin: 0;
+    padding: 0 5%;
+    text-align: center;
+    box-sizing: border-box;
+}
+*{
+    box-sizing: border-box;
+}
+.title{
+    font-size: 24px;
+    color: #4caf50;
+    text-align: center;
+    padding: 20px 0;
+    font-weight: 600;
+}
+.form-row{
+    margin: 20px 0;
+    vertical-align: middle;
+}
+.label{
+    line-height: 20px;
+    width: 100px;
+    display: inline-block;
+    text-align: left;
+}
+.ip{
+    outline: none;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    height: 36px;
+    font-size: 16px;
+    padding: 4px;
+    vertical-align: middle;
+    width: 300px;
+    color: #757575;
+}
+.ip:focus{
+    box-shadow: 0 0 4px 0 rgba(63, 81, 181, 0.4);
+}
+[id^='origin'], [id^='destn']{
+    width: 140px;
+    display: inline-block;
+}
+[id$="Latitude"]{
+    margin-right: 10px;
+}
+[id$="Longitude"]{
+    margin-left: 10px;
+}
+
+#btnRemind{
+    padding: 10px 20px;
+    display: inline-block;
+    font-weight: 600;
+    text-align: center;
+    box-sizing: border-box;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #FFF;
+    background:  #4caf50;
+}
+#btnRemind:hover{
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.3);
+    background: #FFF;
+    color: #4caf50;
+}
+#toastMessenger{
+    padding: 10px;
+    background: #424242;
+    color: #FFF;
+    display: inline-block;
+    margin: 0 auto;
+    bottom: 0;
+    opacity: 0;
+    position: fixed;
+    -webkit-transition: bottom 0.3s ease-in, opacity 0.3s ease-in;
+    -moz-transition: bottom 0.3s ease-in, opacity 0.3s ease-in;
+    transition: bottom 0.3s ease-in, opacity 0.3s ease-in;
+    font-size: 16px;
+}
