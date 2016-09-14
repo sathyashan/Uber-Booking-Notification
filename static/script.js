@@ -87,48 +87,62 @@ $("#btnRemind").click(function () {
                 time = formFields[6].val(),
                 timeAttrs = time.split(":");
             var mapsURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + originLatitude + "," + originLongitude + "&destination=" + destnLatitude + "," + destnLongitude + "&key=" + GMAPS_API_KEY;
-            $.get(mapsURL).done(function (mapData) {
-                //duration value always returns in seconds
-                var travelDuration = mapData.routes[0].legs[0].duration.value;
+            $.ajax({
+                type: 'GET',
+                url: mapsURL,
+                xhrFields: {
+                    withCredentials: false
+                },
+                success: function (mapData) {
+                    //duration value always returns in seconds
+                    var travelDuration = mapData.routes[0].legs[0].duration.value;
 
-                var uberURL = "https://api.uber.com/v1/estimates/time?server_token=" + UBER_SERVER_TOKEN + "&start_latitude=" + originLatitude + "&start_longitude=" + originLongitude;
-                $.get(uberURL).done(function (uberData) {
-                    var uberOptions = uberData.times, uberEstimateTime = 600;
-                    if (uberOptions.length >= 1) {
-                        //finds time for ubergo, if not it takes uberpool
-                        //if it doesn't find both of the above, it takes the time of first available option
-                        uberEstimateTime = uberOptions[0].estimate;
-                        for (var i = 0; i < uberOptions.length; i++) {
-                            if (uberOptions[i].display_name == 'uberGO' || uberOptions[i].display_name == 'uberPOOL') {
-                                uberEstimateTime = uberOptions[i].estimate;
-                                if (uberOptions[i].display_name == 'uberGO') {
-                                    break;
+                    var uberURL = "https://api.uber.com/v1/estimates/time?server_token=" + UBER_SERVER_TOKEN + "&start_latitude=" + originLatitude + "&start_longitude=" + originLongitude;
+                    $.ajax({
+                        type: 'GET',
+                        url: uberURL,
+                        xhrFields: {
+                            withCredentials: false
+                        },
+                        success: function (uberData) {
+                            var uberOptions = uberData.times, uberEstimateTime = 600;
+                            if (uberOptions.length >= 1) {
+                                //finds time for ubergo, if not it takes uberpool
+                                //if it doesn't find both of the above, it takes the time of first available option
+                                uberEstimateTime = uberOptions[0].estimate;
+                                for (var i = 0; i < uberOptions.length; i++) {
+                                    if (uberOptions[i].display_name == 'uberGO' || uberOptions[i].display_name == 'uberPOOL') {
+                                        uberEstimateTime = uberOptions[i].estimate;
+                                        if (uberOptions[i].display_name == 'uberGO') {
+                                            break;
+                                        }
+                                    }
                                 }
                             }
+                            var totalOffsetMinutes = Math.ceil(travelDuration / 60) + Math.ceil(uberEstimateTime / 60);
+                            //create UTC date
+                            var date = new Date();
+                            date.setHours(timeAttrs[0]);
+                            date.setMinutes(timeAttrs[1]);
+                            date.setSeconds(0);
+                            date.setMilliseconds(0);
+                            var postData = { name: name, email: email, origin: originLatitude + "," + originLongitude, destination: destnLatitude + "," + destnLongitude, time: date.toUTCString(), notifyTime: new Date(date.getTime() - (totalOffsetMinutes * 60 * 1000)).toUTCString() };
+                            $.post('/api/notify', postData).done(function (data) {
+                                setToastMessage("Remainder added at " + new Date(postData.notifyTime).toLocaleTimeString());
+                                resetFormFields();
+                                isRequestPending = false;
+                            }).fail(function () {
+                                isRequestPending = false;
+                            });
+                        },
+                        error: function () {
+                            isRequestPending = false;
                         }
-                    }
-                    var totalOffsetMinutes = Math.ceil(travelDuration / 60) + Math.ceil(uberEstimateTime / 60);
-                    //create UTC date
-                    var date = new Date();
-                    date.setHours(timeAttrs[0]);
-                    date.setMinutes(timeAttrs[1]);
-                    date.setSeconds(0);
-                    date.setMilliseconds(0);
-                    var postData = { name: name, email: email, origin: originLatitude + "," + originLongitude, destination: destnLatitude + "," + destnLongitude, time: date.toUTCString(), notifyTime: new Date(date.getTime() - (totalOffsetMinutes * 60 * 1000)).toUTCString() };
-                    $.post('/api/notify', postData).done(function (data) {
-                        console.log(data);
-                        console.log(new Date(postData.notifyTime));
-                        setToastMessage("Remainder added at " + new Date(postData.notifyTime).toLocaleTimeString());
-                        resetFormFields();
-                        isRequestPending = false;
-                    }).fail(function () {
-                        isRequestPending = false;
                     });
-                }).fail(function () {
+                },
+                error: function () {
                     isRequestPending = false;
-                });
-            }).fail(function () {
-                isRequestPending = false;
+                }
             });
         }
         else {
