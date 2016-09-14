@@ -4,7 +4,7 @@ var setToastMessage = function (message) {
     toastMessenger.css({ "opacity": "1", "bottom": "20px" });
     setTimeout(function () {
         toastMessenger.css({ "opacity": "0", "bottom": "0" });
-    }, 2500);
+    }, 5000);
 };
 
 //form field refernces
