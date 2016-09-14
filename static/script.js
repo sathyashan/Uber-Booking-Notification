@@ -87,12 +87,12 @@ $("#btnRemind").click(function () {
                 time = formFields[6].val(),
                 timeAttrs = time.split(":");
             var mapsURL = "https://maps.googleapis.com/maps/api/directions/json?origin=" + originLatitude + "," + originLongitude + "&destination=" + destnLatitude + "," + destnLongitude + "&key=" + GMAPS_API_KEY;
-            $.get(mapsURL, function (mapData) {
+            $.get(mapsURL).done(function (mapData) {
                 //duration value always returns in seconds
                 var travelDuration = mapData.routes[0].legs[0].duration.value;
-                
+
                 var uberURL = "https://api.uber.com/v1/estimates/time?server_token=" + UBER_SERVER_TOKEN + "&start_latitude=" + originLatitude + "&start_longitude=" + originLongitude;
-                $.get(uberURL, function (uberData) {
+                $.get(uberURL).done(function (uberData) {
                     var uberOptions = uberData.times, uberEstimateTime = 600;
                     if (uberOptions.length >= 1) {
                         //finds time for ubergo, if not it takes uberpool
@@ -117,7 +117,8 @@ $("#btnRemind").click(function () {
                     var postData = { name: name, email: email, origin: originLatitude + "," + originLongitude, destination: destnLatitude + "," + destnLongitude, time: date.toUTCString(), notifyTime: new Date(date.getTime() - (totalOffsetMinutes * 60 * 1000)).toUTCString() };
                     $.post('/api/notify', postData).done(function (data) {
                         console.log(data);
-                        setToastMessage("Remainder added at " + notifyTime.toLocalTimeString());
+                        console.log(new Date(postData.notifyTime));
+                        setToastMessage("Remainder added at " + new Date(postData.notifyTime).toLocaleTimeString());
                         resetFormFields();
                         isRequestPending = false;
                     }).fail(function () {
