@@ -86,7 +86,7 @@ var j = scheduler.scheduleJob('*/1 * * * *', function () {
                             };
 
                             mailer.sendMail(mailOptions, function (mailererr, mailerres) {
-                                if (!mailerr) {
+                                if (!mailererr) {
                                     console.log("email sent");
                                     var delStmt = "DELETE FROM UberRemainder WHERE id IN (" + idsString + ")";
                                     //now delete the expired records
