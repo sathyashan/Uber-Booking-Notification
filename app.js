@@ -13,10 +13,10 @@ app.use(bodyParser.json());
 /*
 postgresHandle.defaults.ssl = true;
 var config = {
-    user: 'jsvjxaxivutiid',
-    database: 'd3mltsg5qh11fe',
-    password: 'Iu3pdH2BccKgOWDsmPT_QqPhoD',
-    host: 'ec2-174-129-209-53.compute-1.amazonaws.com',
+    user: 'user',
+    database: 'db',
+    password: 'password',
+    host: 'host',
     port: 5432,
     max: 12,
     idleTimeoutMillis: 30000
@@ -28,7 +28,7 @@ var mailer = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
         user: 'sathyashan91@gmail.com',
-        pass: 'Sathya12s'
+        pass: '<pass>'
     }
 });
 
@@ -37,7 +37,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/api/notify', function (req, res) {
-    console.log(new Date(req.body.notifyTime));
+    //creates the job to send a mail on notify time
     scheduler.scheduleJob(new Date(req.body.notifyTime), function () {
         var mailOptions = {
             from: 'sathyashan91@gmail.com', // sender address
